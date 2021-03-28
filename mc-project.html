@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Maroon Capital Project</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+      <div class="navbar-brand"> Joshua Athayde's Portfolio </div>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="index.html">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="mc-project.html">Maroon Capital Project</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://www.linkedin.com/in/joshua-athayde/">Linkedin</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://www.github.com/jathayde314/">GitHub</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h1 class="mt-5">Maroon Capital Project</h1>
+        <p class="lead">Bitcoin trading algorithm using Twitter API data.</p>
+        <p class = "text-justify"> As part of the Maroon Capital Systematic Cohort, our team was tasked with designing and testing a data driven trading algorithm. We hypothesized that given Bitcoin large pop culture presence, its price may be sensitive to changes in public sentiment. To determine public sentiment, we used four years of Twitter API data from <a href="https://www.kaggle.com/alaix14/bitcoin-tweets-20160101-to-20190329"> https://www.kaggle.com/alaix14/bitcoin-tweets-20160101-to-20190329</a>. To generate a daily score, we applied <a href="https://github.com/cjhutto/vaderSentiment">VADER</a> to each tweet, taking the difference of the positive and negative score, then multiplying by number of likes.
+        </p>
+        <img src="Price-vs-Sentiment.png" alt="Price-vs-Sentiment" width="600">
+        <p>Price of Bitcoin (orange) vs public sentiment score (blue)</p>
+        <p class = "text-justify">We traded on the ratio of our public sentiment score to the price of Bitcoin, assuming that the ratio would be mean-reverting. As such, our trading strategy was dependent on two parameters: <i>lookback</i> and <i>width</i>. When the present signal exceeds the mean of the signal over the lookback window plus the width times the standard deviation over the lookback window, we short Bitcoin and hold until this condition is no longer satisfied. We buy when the signal is less than the mean minus the width times the standard deviation, and sell when the condition is no longer satisfied. For example, here is how the algorithm did with <i>lookback</i> = 20 and <i>width</i> = 2.
+        </p>
+        <img src="BB.png" alt="BB.png" width="600">
+        <p>Signal vs Upper and Lower Bands (<i>lookback</i> = 20, <i>width</i> = 2)</p>
+        <img src="Positions.png" alt="Positions.png" width="600">
+        <p>Positions held (<i>lookback</i> = 20, <i>width</i> = 2)</p>
+        <img src="TrainingP&L.png" alt="TrainingP&L.png" width="600">
+        <p>Profit and Loss (<i>lookback</i> = 20, <i>width</i> = 2)</p>
+        <p class = "text-justify">To find optimal parameters, we then grid-searched over <i>lookback</i> and <i>width</i> using our training data. Other optimazation techniques (such as gradient descent) work best on continous and differentiable cost functions. However, the discrete nature of trading algorithm implies the cost function (sharpe ratio) should not be continuous nevertheless differentiable. Note that the surface below just linearly connects the points where the sharpe ratio was calculated and may not be a good approximation for other points.
+        </p>
+        <img src="Grid_Search.png" alt="Grid_Search.png" width="600">
+        <p class = "text-justify"> The grid search seems to have ridges that correlate with the width chosen. A plausible explanation for this trend is that higher widths selects for the same extreme public sentiment/pricing events. Around 1.5 and 2.3, the trading strategy seems especially profitable. However, these standard deviations may be arbitrary and may just fit the profitable extreme events in the training data set. Nevertheless, we took the optimal parameters on the training data and applied them to the testing data.
+        </p>
+        <img src="TestingP&L.png" alt="TestingP&L.png" width="600">
+        <p> Profit and loss for the optimal parameters on the training data applied to the testing data. </p>
+        <p class = "text-justify"> With a Sharpe Ratio of 1.28, the algorithm is successful, but given the small sample size of positions taken and the concern about overfitting extreme events, I would be hestitant to trust the predictive power of the model.
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.slim.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
